@@ -74,6 +74,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedAddView(
     navController: NavHostController,
+    postRepository: PostRepository,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -116,13 +117,6 @@ fun FeedAddView(
         // 이미지 권한 요청
         galleryPermissionState.launchPermissionRequest()
     }
-
-
-    // 하드코딩 토큰
-    val hardCodedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiLtjIDtlIwiLCJpc3MiOiLrqqjtlIQiLCJ1c2VySWQiOiJ0ZXN0ZXIiLCJleHAiOjE3NDkyMTQzMjV9.qwJrqMXGdOroZbnWSp86toPeF3vIQQOj2uy4RUt7aAc"
-    val apiService = remember { NetworkModule.provideApiServiceWithoutInterceptor() }
-    val postRepository = remember { PostRepository(apiService, hardCodedToken) } // 하드코딩 토큰은 함수 파라미터로
-
 
     Box(
         modifier = modifier
@@ -434,12 +428,4 @@ fun FeedAddView(
             }
         }
     }
-}
-
-
-@Preview(showBackground = true, widthDp = 400, heightDp = 800)
-@Composable
-fun FeedAddViewPreview() {
-    val navController = rememberNavController()
-    FeedAddView(navController = navController)
 }

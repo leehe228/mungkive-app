@@ -17,6 +17,11 @@ import com.mungkive.application.ui.map.MapView
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import com.mungkive.application.core.TokenManager
+import com.mungkive.application.network.NetworkModule
+import com.mungkive.application.repository.PostRepository
+import com.mungkive.application.ui.feed.FeedViewModelProviderFactory
 import com.mungkive.application.ui.tip.TipListView
 import com.mungkive.application.viewmodels.ApiTestViewModel
 
@@ -26,13 +31,20 @@ fun MainNavGraph(
     modifier: Modifier = Modifier,
     viewModel: ApiTestViewModel
 ) {
+    val context = LocalContext.current
+    val tokenManager = remember { TokenManager(context) }
+    val loginService = remember { NetworkModule.provideLoginService() }
+    val apiService = remember { NetworkModule.provideApiService(tokenManager, loginService) }
+    val postRepository = remember { PostRepository(apiService) }
+    val feedViewModelFactory = remember { FeedViewModelProviderFactory(postRepository) }
+
     NavHost(
         navController = navController,
         startDestination = Routes.Feed.route,
         modifier = modifier
     ) {
         composable(Routes.Map.route) {
-            val feedViewModel: FeedViewModel = viewModel()
+            val feedViewModel: FeedViewModel = viewModel(factory = feedViewModelFactory)
             val feedList by feedViewModel.feedList.collectAsState()
 
             // ViewModel에서 데이터를 불러오도록 호출
@@ -48,13 +60,14 @@ fun MainNavGraph(
             )
         }
         composable(Routes.Feed.route) { backStackEntry ->
-            // 1. parentEntry로 NavGraph Scope ViewModel을 만듦
+            // FeedViewModel을 Feed.route 스코프로 생성
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(Routes.Feed.route)
             }
-            val viewModel: FeedViewModel = viewModel(parentEntry)
+            val feedViewModel: FeedViewModel = viewModel(parentEntry, factory = feedViewModelFactory)
+
             FeedListView(
-                viewModel = viewModel,
+                viewModel = feedViewModel,
                 onFeedClick = { feed ->
                     navController.navigate("${Routes.DetailFeed.route}/${feed.id}")
                 }
@@ -74,11 +87,11 @@ fun MainNavGraph(
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(Routes.Feed.route)
             }
-            val viewModel: FeedViewModel = viewModel(parentEntry)
+            val feedViewModel: FeedViewModel = viewModel(parentEntry, factory = feedViewModelFactory)
             val feedId = backStackEntry.arguments?.getString("feedId") ?: ""
             FeedDetailView(
                 feedId = feedId,
-                viewModel = viewModel,
+                viewModel = feedViewModel,
                 navController = navController
             )
         }

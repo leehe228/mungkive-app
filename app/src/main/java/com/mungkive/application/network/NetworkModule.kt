@@ -48,22 +48,4 @@ object NetworkModule {
 
         return retrofit.create(AuthService::class.java)
     }
-
-    fun provideApiServiceWithoutInterceptor(): ApiService {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        return retrofit.create(ApiService::class.java)
-    }
-
 }

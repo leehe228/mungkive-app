@@ -34,17 +34,13 @@ interface ApiService {
     suspend fun editProfile(@Body req: ProfileEditRequest): MsgResponse
 
     /* 게시글 */
-    // 게시글 작성 시 Authorization 헤더를 수동으로 추가하게 임의로 수정
-    // TODO: 헤더에 토큰 넣는거 빼기
     @POST("post")
     suspend fun createPost(
-        @Header("Authorization") token: String,
         @Body req: PostCreateRequest
     ): Response<Void>
 
     @GET("posts")
     suspend fun listPosts(
-        @Header("Authorization") token: String,
     ): List<PostResponse>
 
     @GET("posts/mypost")
@@ -63,7 +59,6 @@ interface ApiService {
 
     @GET("post/{id}/comments")
     suspend fun getComments(
-        @Header("Authorization") token: String,
         @Path("id") postId: Long
     ): List<CommentResponse>
 

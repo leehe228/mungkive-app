@@ -74,4 +74,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    // SwipeRefresh 의존성 추가
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")
+
 }

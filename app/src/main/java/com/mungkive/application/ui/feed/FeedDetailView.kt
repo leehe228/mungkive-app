@@ -264,22 +264,3 @@ fun FeedDetailView(
         }
     }
 }
-
-fun getPreviewFeedViewModel(): FeedViewModel {
-    val viewModel = FeedViewModel()
-    viewModel.fetchFeeds()
-    return viewModel
-}
-
-@Preview(showBackground = true, widthDp = 400, heightDp = 800)
-@Composable
-fun FeedDetailViewPreview() {
-    val navController = rememberNavController()
-    val viewModel = remember { getPreviewFeedViewModel() }
-    FeedDetailView(
-        feedId = "1",
-        viewModel = viewModel,
-        navController = navController,
-        modifier = Modifier
-    )
-}

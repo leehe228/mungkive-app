@@ -7,20 +7,19 @@ import com.mungkive.application.network.dto.PostResponse
 import retrofit2.Response
 
 class PostRepository(
-    private val apiService: ApiService,
-    private val token: String   // 하드코딩 토큰 사용
+    private val apiService: ApiService
 ) {
 
     // TODO: 헤더에 토큰 넣는거 뺴기
     suspend fun createPost(request: PostCreateRequest): Response<Void> {
-        return apiService.createPost("Bearer $token", request)
+        return apiService.createPost(request)
     }
 
     suspend fun getComments(postId: Long): List<CommentResponse> {
-        return apiService.getComments("Bearer $token", postId)
+        return apiService.getComments(postId)
     }
 
     suspend fun getFeeds(): List<PostResponse> {
-        return apiService.listPosts("Bearer $token")
+        return apiService.listPosts()
     }
 }
